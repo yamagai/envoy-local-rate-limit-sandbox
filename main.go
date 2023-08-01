@@ -18,8 +18,8 @@ func main() {
 		requestCount++
 		mu.Unlock()
 
-		if requestCount > 3 {
-			http.Error(w, "over three request!", http.StatusTooManyRequests)
+		if requestCount > 1 {
+			http.Error(w, "over one request!", http.StatusTooManyRequests)
 			return
 		}
 

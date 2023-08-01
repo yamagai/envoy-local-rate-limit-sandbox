@@ -12,6 +12,21 @@ static_resources:
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
                 stat_prefix: ingress_http
+                local_reply_config:
+                  mappers:
+                  - filter:
+                      status_code_filter:
+                        comparison:
+                          op: EQ
+                          value:
+                            default_value: 429
+                            runtime_key: key_b
+                    body:
+                      inline_string: "Too many requests"
+                    body_format_override:
+                      json_format:
+                        status: "%RESPONSE_CODE%"
+                        message: "%LOCAL_REPLY_BODY%"
                 http_filters:
                 - name: envoy.filters.http.local_ratelimit
                   typed_config:
@@ -33,9 +48,9 @@ static_resources:
                           "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
                           stat_prefix: http_local_rate_limiter
                           token_bucket:
-                            max_tokens: 1
+                            max_tokens: 3
                             tokens_per_fill: 1
-                            fill_interval: 1s
+                            fill_interval: 10s
                           filter_enabled:
                             runtime_key: local_rate_limit_enabled
                             default_value:

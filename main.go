@@ -12,6 +12,8 @@ var mu sync.Mutex
 
 func main() {
 	handler := func(w http.ResponseWriter, r *http.Request) {
+		log.Println("request received...")
+
 		mu.Lock()
 		requestCount++
 		mu.Unlock()
@@ -24,5 +26,5 @@ func main() {
 		_, _ = io.WriteString(w, "Hello Envoy")
 	}
 	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
